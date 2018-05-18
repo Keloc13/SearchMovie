@@ -3,6 +3,13 @@ import React from 'react'
 class MovieRow extends React.Component {
     constructor(){
         super()
+
+    }
+    viewMovie() {
+        console.log(this.props.movie.title)
+        const url = "https://www.themoviedb.org/movie/" + this.props.movie.id
+        window.location.href = url
+
     }
 
     render() {
@@ -18,8 +25,9 @@ class MovieRow extends React.Component {
                 </td>
                 <td>
 
-                    {this.props.movie.title}
+                    <h3>{this.props.movie.title}</h3>
                     <p>{this.props.movie.overview}</p>
+                    <input type={"button"} onClick={this.viewMovie.bind(this)} value={"view"}/>
 
                 </td>
             </tr>

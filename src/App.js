@@ -9,43 +9,43 @@ class App extends Component {
         super(props)
         console.log("This is my initializer")
 
-        const movies = [
-            {id: 0, poster_src: "https://image.tmdb.org/t/p/w185/D6e8RJf2qUstnfkTslTXNTUAlT.jpg", title: "Avengers: Infinity War", overview: "BANANA"},
-            {id: 1, poster_src: "https://image.tmdb.org/t/p/w185/rv1AWImgx386ULjcf62VYaW8zSt.jpg", title: "The Avengers", overview: "BANANA"},
-            {id: 2, poster_src: "https://image.tmdb.org/t/p/w185/tTTF5Uf20NFk5EaZUycIpSy3ONn.jpg", title: "Avengers: Dawn of the Poop", overview: "BANANA"}
-            ]
-
-        //this.state = {rows: <p>This is my row</p>}
-
-        var movieRows = []
-
-        movies.forEach((movie) => {
-            console.log(movie.title)
-
-            const movieRow = <MovieRow movie={movie}/>
-            movieRows.push(<p>{movieRow}</p>)
-        })
-
-        this.state = {rows: movieRows}
-
-        this.performSearch()
+        this.state = {}
+        this.performSearch("Avenger")
     }
 
-    performSearch() {
+    performSearch(searchTerm) {
         console.log("performing search")
-        const urlString = ''
+        const urlString = 'https://api.themoviedb.org/3/search/movie?api_key=2d615ff42ada67c5b3ef98d1a28dbb40&query=' + searchTerm
         $.ajax({
             url: urlString,
             success: (searchResults) =>{
                 console.log("Fetch data successfully")
+                //console.log(searchResults)
+                const results = searchResults.results
+
+                var movieRows = []
+
+                results.forEach((movie) =>{
+                    console.log(movie.title)
+                    movie.poster_src = "http://image.tmdb.org/t/p/w185/" + movie.poster_path
+                    console.log(movie.poster_src)
+                    const movieRow = <MovieRow movie={movie}/>
+                    movieRows.push(movieRow)
+                })
+
+                this.setState({rows: movieRows})
             },
             error: (xhr, status, err) => {
                 console.error("failed to fetch data")
-        }
+             }
 
         })
     }
 
+    searchChangeHandler(event) {
+        const searchTerm = event.target.value
+        this.performSearch(searchTerm)
+    }
   render() {
     return (
       <div className="App">
@@ -55,7 +55,7 @@ class App extends Component {
                   <td width="8">
                       <img width="50" src={"BlackBackground.jpg"}/>
                   </td>
-                  <td><h3>MovieDB Search</h3></td>
+                  <td><h2>MovieDB Search</h2></td>
               </tr>
               </tbody>
           </table>
@@ -67,7 +67,7 @@ class App extends Component {
               paddingTop: 8,
               paddingBottom: 8,
               paddingLeft: 16
-          }} placeholder={"Enter search term"}/>
+          }} onChange={this.searchChangeHandler.bind(this)} placeholder={"Enter search term"}/>
 
           {this.state.rows}
       </div>
